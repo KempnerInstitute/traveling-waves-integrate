@@ -94,12 +94,6 @@ def train(net, dataset_name, trainset, valset, testset, device,
         # Log train metrics
         for metric in epoch_metrics:
             epoch_metrics[metric] = epoch_metrics[metric] / num_train_samples
-        #wandb.log({"train_loss": epoch_metrics['total_loss']}, step=epoch + 1)
-        #wandb.log({"train_iou": epoch_metrics['total_iou']}, step=epoch + 1)
-        #wandb.log({"train_acc": epoch_metrics['total_acc']}, step=epoch + 1)
-        #wandb.log({"train_loss_foreground": epoch_metrics['foreground_loss']}, step=epoch + 1)
-        #wandb.log({"train_iou_foreground": epoch_metrics['foreground_iou']}, step=epoch + 1)
-        #wandb.log({"train_acc_foreground": epoch_metrics['foreground_acc']}, step=epoch + 1)
         wandb.log({
             "train_loss": epoch_metrics['total_loss'],
             "train_iou": epoch_metrics['total_iou'],
@@ -109,13 +103,7 @@ def train(net, dataset_name, trainset, valset, testset, device,
             "train_acc_foreground": epoch_metrics['foreground_acc']
         }, step=epoch + 1)
 
-        # Log val metrics
-        #wandb.log({"val_loss": val_metrics['total_loss']}, step=epoch + 1)
-        #wandb.log({"val_iou": val_metrics['total_iou']}, step=epoch + 1)
-        #wandb.log({"val_acc": val_metrics['total_acc']}, step=epoch + 1)
-        #wandb.log({"val_loss_foreground": val_metrics['foreground_loss']}, step=epoch + 1)
-        #wandb.log({"val_iou_foreground": val_metrics['foreground_iou']}, step=epoch + 1)
-        #wandb.log({"val_acc_foreground": val_metrics['foreground_acc']}, step=epoch + 1)
+
         wandb.log({
             "val_loss": val_metrics['total_loss'],
             "val_iou": val_metrics['total_iou'],
@@ -133,14 +121,11 @@ def train(net, dataset_name, trainset, valset, testset, device,
             best_val_loss = val_loss
             save_weights(net.state_dict(), cp_path)
             patience_counter = 0  # Reset patience counter since we found a new best
-            #print("New best model found and saved.")
         else:
             patience_counter += 1
-            #print(f"No improvement. Patience counter: {patience_counter}/{patience}")
 
         # Check for early stopping
         if patience_counter >= patience and epoch + 1 >= min_epochs:
-            #print("Early stopping triggered.")
             break
 
     # Load weights of the best model
@@ -162,12 +147,6 @@ def train(net, dataset_name, trainset, valset, testset, device,
         "test_iou_foreground": test_metrics['foreground_iou'],
         "test_acc_foreground": test_metrics['foreground_acc']
     }, step=epoch + 1)
-    #wandb.log({"test_loss": test_metrics['total_loss']}, step=epoch + 1)
-    #wandb.log({"test_iou": test_metrics['total_iou']}, step=epoch + 1)
-    #wandb.log({"test_acc": test_metrics['total_acc']}, step=epoch + 1)
-    #wandb.log({"test_loss_foreground": test_metrics['foreground_loss']}, step=epoch + 1)
-    #wandb.log({"test_iou_foreground": test_metrics['foreground_iou']}, step=epoch + 1)
-    #wandb.log({"test_acc_foreground": test_metrics['foreground_acc']}, step=epoch + 1)
     if (not model_type.startswith("unet")) and model_type != 'baseline1_flexible':
         eval_for_video(net, "testset", testset, device, batch_size, num_samples_plot=2, num_channels_plot=num_channels_plot)
 
