@@ -1,0 +1,8 @@
+,,,acc,acc,acc_foreground,acc_foreground,iou,iou,iou_foreground,iou_foreground,loss,loss,loss_foreground,loss_foreground
+,,,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+dataset,model_type,c_mid,,,,,,,,,,,,
+multi_mnist,cornn_model2,16,1.0,0.0,0.96,0.01,0.94,0.01,0.93,0.01,0.01,0.0,0.15,0.02
+multi_mnist,unet2,2,0.98,0.01,0.66,0.27,0.66,0.27,0.6,0.28,0.06,0.03,1.19,0.56
+multi_mnist,unet2,3,1.0,0.0,0.9,0.1,0.91,0.08,0.87,0.13,0.03,0.01,0.56,0.26
+multi_mnist,unet2,4,1.0,0.0,0.97,0.0,0.97,0.01,0.96,0.01,0.01,0.0,0.24,0.04
+multi_mnist,unet2,5,1.0,0.0,0.98,0.0,0.98,0.0,0.97,0.0,0.01,0.0,0.17,0.05

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd scripts-ccn-1/readouts4_cornn_multi_mnist_300e_100ts_v3
+
+sbatch train_linear_smaller4_100iters_16hc.sh
+sbatch train_linear_smaller4_100iters_16hc_set.sh
+sbatch train_linear_smaller4_100iters_16hc_set2.sh
+sbatch train_linear_smaller4_100iters_16hc_set3.sh
+sbatch train_linear_smaller4_100iters_16hc_set4.sh
+sbatch train_linear_smaller4_100iters_16hc_set5.sh
+sbatch train_linear_smaller4_100iters_16hc_set6.sh
+sbatch train_linear_smaller4_100iters_16hc_set7.sh
+sbatch train_linear_smaller4_100iters_16hc_set8.sh
+sbatch train_linear_smaller4_100iters_16hc_set9.sh
+sbatch train_linear_smaller4_100iters_16hc_set10.sh

@@ -1,0 +1,15 @@
+\begin{tabular}{lllrrrrrrrrrrrr}
+\toprule
+ &  &  & \multicolumn{2}{r}{acc} & \multicolumn{2}{r}{acc_foreground} & \multicolumn{2}{r}{iou} & \multicolumn{2}{r}{iou_foreground} & \multicolumn{2}{r}{loss} & \multicolumn{2}{r}{loss_foreground} \\
+ &  &  & mean & std & mean & std & mean & std & mean & std & mean & std & mean & std \\
+dataset & model_type & c_mid &  &  &  &  &  &  &  &  &  &  &  &  \\
+\midrule
+\multirow[t]{5}{*}{multi_mnist} & cornn_model2 & 16 & 1.00 & 0.00 & 0.96 & 0.01 & 0.94 & 0.01 & 0.93 & 0.01 & 0.01 & 0.00 & 0.15 & 0.02 \\
+\cline{2-15}
+ & \multirow[t]{4}{*}{unet2} & 2 & 0.98 & 0.01 & 0.66 & 0.27 & 0.66 & 0.27 & 0.60 & 0.28 & 0.06 & 0.03 & 1.19 & 0.56 \\
+ &  & 3 & 1.00 & 0.00 & 0.90 & 0.10 & 0.91 & 0.08 & 0.87 & 0.13 & 0.03 & 0.01 & 0.56 & 0.26 \\
+ &  & 4 & 1.00 & 0.00 & 0.97 & 0.00 & 0.97 & 0.01 & 0.96 & 0.01 & 0.01 & 0.00 & 0.24 & 0.04 \\
+ &  & 5 & 1.00 & 0.00 & 0.98 & 0.00 & 0.98 & 0.00 & 0.97 & 0.00 & 0.01 & 0.00 & 0.17 & 0.05 \\
+\cline{1-15} \cline{2-15}
+\bottomrule
+\end{tabular}

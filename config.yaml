@@ -1,0 +1,35 @@
+wandb:
+  project: object-shape
+  entity:
+hydra:
+  run:
+    dir: experiments/${now:%Y-%m-%d}/${now:%H-%M-%S} #${now:%Y-%m-%d}/${now:%H-%M-%S}
+params:
+  run_name: "${now:%Y-%m-%d}/${now:%H-%M-%S}/new_tetronimoes/"
+  model_type: "cornn_model2" # model1=cornn, model2=slot attention, model3=baseline conv
+  readout_type: "conv4" # last, fft, linear, stft, mean_time, max_time
+  dataset: "new_tetronimoes" # options: 'two-shapes' 'tetrominoes' '2-4Shapes'
+  N: 64 # use 32 for two-shapes, 35 for tetrominoes, 40 for 2-4Shapes (unless you change encoder feature resolution)
+  batch_size: 16
+  min_epochs: 25
+  max_epochs: 50
+  lr: 1.0e-3
+  seed: 6
+  min_iters: 0
+  max_iters: 100
+  dt: 0.1
+  num_classes: 6
+  c_mid: 11
+  hidden_channels: 11
+  rnn_kernel: 3
+  kernel_init: 'op' # options: 'vanilla' 'op' 'pk'
+  cp_path: "cp.pt"
+  save_model: True
+  num_channels_plot: 2 # to plot all, set num_channels_plot to null or the value of hidden_channels
+  normalize: True
+  optimizer: 'adam' # adam, adamw
+  weight_decay: 0.01
+  cell_type: 'lstm' # rnn, gru, lstm
+  num_layers: 16 # for baseline
+  training_patience: 10
+  training_tolerance: 0.001
