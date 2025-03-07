@@ -1,4 +1,8 @@
-# Traveling_Waves_Integrate
+# Traveling Waves Integrate Spatial Information Through Time
+
+Code for the preprint "Traveling Waves Integrate Spatial Information Through Time".
+
+**Abstract**:Traveling waves of neural activity are widely observed in the brain, but their precise computational function remains unclear. One prominent hypothesis is that they enable the transfer and integration of spatial information across neural populations. However, few computational models have explored how traveling waves might be harnessed to perform such integrative processing. Drawing inspiration from the famous "Can one hear the shape of a drum?" problem -- which highlights how normal modes of wave dynamics encode geometric information -- we investigate whether similar principles can be leveraged in artificial neural networks. Specifically, we introduce convolutional recurrent neural networks that learn to produce traveling waves in their hidden states in response to visual stimuli, enabling spatial integration. By then treating these wave-like activation sequences as visual representations themselves, we obtain a powerful representational space that outperforms local feed-forward networks on tasks requiring global spatial context. In particular, we observe that traveling waves effectively expand the receptive field of locally connected neurons, supporting long-range encoding and communication of information. We demonstrate that models equipped with this mechanism solve visual semantic segmentation tasks demanding global integration, significantly outperforming local feed-forward models and rivaling non-local U-Net models with fewer parameters. As a first step toward traveling-wave-based communication and visual representation in artificial networks, our findings suggest wave-dynamics may provide efficiency and training stability benefits, while simultaneously offering a new framework for connecting models to biological recordings of neural activity.
 
 
 ## Polygons NWM Waves
@@ -66,7 +70,7 @@
   </tr>
 </table>
 
-## Reproducing results
+## Instructions
 1. Set up the conda environment using environment.yml.
 2. Create data by running data_scripts/create_tetrominoes.py and data_scripts/download_mnist.py data_scripts/create_multi_mnist.py
 3. Edit dataset_config.py with absolute paths to the generated data.
