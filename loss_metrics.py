@@ -53,7 +53,6 @@ Returns:
     torch.Tensor: Mean IoU for each image, shape (B,)
 """
 def calc_iou(predictions, ground_truth, ignore_class=0, num_classes=None):
-    
     if predictions.shape != ground_truth.shape:
         raise ValueError("Shape of predictions and ground_truth must match.")
 
@@ -109,30 +108,23 @@ def compute_pixelwise_accuracy(pred_mask, true_mask):
 
     return pixel_wise_accuracies.sum().item()
 
+# multi-class, count background as a class
+def compute_iou(masks1, masks2, num_classes=None):
+    if num_classes is None:
+        num_classes = int(max(masks1.max(), masks2.max()) + 1)
 
-def compute_iou(masks1, masks2):
-    """
-    Calculate IoU for batches of segmentation masks, ignoring specific values.
-    
-    Parameters:
-        masks1 (torch.Tensor): A batch of ground truth masks with shape (batch_size, height, width).
-        masks2 (torch.Tensor): A batch of predicted masks with shape (batch_size, height, width).
-        ignore_value (int): Specifies the value in masks1 to be ignored.
-    
-    Returns:
-        torch.Tensor: A tensor containing IoU scores for each item in the batch.
-    """
-    batch_size = masks1.shape[0]
-    
-    # Flatten the height and width dimensions for vectorized operations
-    masks1 = masks1.view(batch_size, -1)
-    masks2 = masks2.view(batch_size, -1)
-    
-    # Compute intersection and union where the valid mask is True
-    intersection = (masks1 & masks2).sum(dim=1).float()
-    union = (masks1 | masks2).sum(dim=1).float()
+    batch_size = masks1.size(0)
 
-    # Compute IoU, ignoring invalid areas
-    iou = torch.where(union > 0, intersection / union, torch.tensor(float('nan')))
-    
-    return iou.sum().item()
+    # Expand dimensions to (B, C, H, W) for one-hot encoding
+    m1_one_hot = torch.nn.functional.one_hot(masks1, num_classes=num_classes).permute(0, 3, 1, 2)  # (B, C, H, W)
+    m2_one_hot = torch.nn.functional.one_hot(masks2, num_classes=num_classes).permute(0, 3, 1, 2)  # (B, C, H, W)
+
+    # APPLY MASK
+    intersection = (m1_one_hot & m2_one_hot) # B x C x H x W
+    union = (m1_one_hot | m2_one_hot) # B x C x H x W
+
+    intersection = intersection.sum((1, 2, 3))
+    union = union.sum((1, 2, 3))
+    iou = intersection / union
+    iou = iou.cpu().numpy()
+    return np.sum(iou)

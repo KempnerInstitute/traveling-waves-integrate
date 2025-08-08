@@ -11,22 +11,16 @@ import pdb
 from utils import make_model, set_random_seed
 from trainer import eval_metrics
 from dataset import load_data
-from dataset_config import DATASET_CONFIG
-
-import pdb
-
-
-#SCORE_FILE = "results/scores_test_multi-mnist.csv"
-SCORE_FILE = "results_scores/scores_test_multi-mnist.csv"
+#from dataset_config import DATASET_CONFIG
 
 DATASET_CONFIG = {
     'new_tetronimoes': {
-        'x_train_path': "/data/datasets/new_tetrominoes/train_images.npy", # WRITE ABSOLUTE PATHS
-        'y_train_path': "/data/datasets/new_tetrominoes/train_masks.npy",
-        'x_val_path': "/data/datasets/new_tetrominoes/val_images.npy",
-        'y_val_path': "/data/datasets/new_tetrominoes/val_masks.npy",
-        'x_test_path': "/data/datasets/new_tetrominoes/test_images.npy",
-        'y_test_path': "/data/datasets/new_tetrominoes/test_masks.npy",
+        'x_train_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/train_images.npy", # WRITE ABSOLUTE PATHS
+        'y_train_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/train_masks.npy",
+        'x_val_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/val_images.npy",
+        'y_val_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/val_masks.npy",
+        'x_test_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/test_images.npy",
+        'y_test_path': "/n/ba_lab/Everyone/mjacobs/data/datasets/new_tetrominoes/test_masks.npy",
         'img_size': 64,
         'channels': 3,
     },
@@ -41,27 +35,19 @@ DATASET_CONFIG = {
         'channels': 1,
     },
     'mnist': {
-        'train_path': '/data/datasets/mnist/',
-        'test_path': '/data/datasets/mnist/',
+        'train_path': '/n/ba_lab/Everyone/mjacobs/data/datasets/mnist/',
+        'test_path': '/n/ba_lab/Everyone/mjacobs/data/datasets/mnist/',
         'img_size': 56,  # Image size for resizing
         'channels': 1, # originally 1, but color jitter makes it 3
     },
 }
 
-CORNN_FOLDERS = [
-    "ccn17/multi_mnist/cornn_model2/1/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/2/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/3/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/5/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/8/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/9/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/11/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/12/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/13/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/14/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/15/linear_smaller4_0-100iters_16hc/",
-    "ccn17/multi_mnist/cornn_model2/16/linear_smaller4_0-100iters_16hc/"
-]
+import pdb
+
+
+#SCORE_FILE = "results/scores_test2.csv"
+#SCORE_FILE = "results/scores_test_mnist_tetro.csv"
+SCORE_FILE = "results_scores/scores_test_mnist_tetro.csv"
 
 
 def main():
@@ -70,51 +56,50 @@ def main():
     loss_foreground = nn.CrossEntropyLoss(ignore_index=0)
     
     # Load data
-    data_config1 = DATASET_CONFIG['multi_mnist']
-    _, _, testset1 = load_data('multi_mnist', data_config1)
-    testsets = {'multi_mnist' : testset1}
+    data_config1 = DATASET_CONFIG['new_tetronimoes']
+    data_config2 = DATASET_CONFIG['mnist']
+    _, _, testset1 = load_data('new_tetronimoes', data_config1)
+    _, _, testset2 = load_data('mnist', data_config2)
+    testsets = {'new_tetronimoes' : testset1,
+                'mnist' : testset2}
 
-    # Setup folders to load nets
-    #base_folder = 'experiments'
+    # Setup folders
     base_folder = '/n/ba_lab/Everyone/mjacobs/projects/shape-object_store'
-    unet_folder = 'ccn14/multi_mnist/unet2'
+    ccns = ['ccn8', 'ccn11', 'ccn8_rerun'] # ccn9
+    datasets = ['mnist', 'new_tetronimoes']
+    models = ['cornn_model2', 'conv_recurrent2', 'baseline1_flexible']
     extensions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    # load cornn configs and folders
+    # Load configs and run folders
     configs = []
     folders = []
-    for folder in CORNN_FOLDERS:
-        folder = f"{base_folder}/{folder}"
-        search_pattern = os.path.join(folder, '**', '.hydra', 'config.yaml')
-        for file_path in glob.iglob(search_pattern, recursive=True):
-            if os.path.isfile(file_path):
-                configs.append(load_yaml_file(file_path))
-                folders.append(os.path.dirname(os.path.dirname(file_path)) + "/")
-
-    # Load unet configs and folders
-    for ext in extensions:
-        folder = f"{base_folder}/{unet_folder}/{ext}"
-        search_pattern = os.path.join(folder, '**', '.hydra', 'config.yaml')
-        for file_path in glob.iglob(search_pattern, recursive=True):
-            if os.path.isfile(file_path):
-                configs.append(load_yaml_file(file_path))
-                folders.append(os.path.dirname(os.path.dirname(file_path)) + "/")
-
-    # Load runs for the last 2 sets of seeds
-    unet_folder = 'ccn14_v2/multi_mnist/unet2'
-    extensions = [11, 12]
-    for ext in extensions:
-        folder = f"{base_folder}/{unet_folder}/{ext}"
-        search_pattern = os.path.join(folder, '**', '.hydra', 'config.yaml')
-        for file_path in glob.iglob(search_pattern, recursive=True):
-            if os.path.isfile(file_path):
-                configs.append(load_yaml_file(file_path))
-                folders.append(os.path.dirname(os.path.dirname(file_path)) + "/")
-
+    for ccn in ccns:
+        for dataset in datasets:
+            for model in models:
+                # Skip
+                if ccn == 'ccn8' and model == 'baseline1_flexible':
+                    continue
+                if ccn == 'ccn11' and model != 'baseline1_flexible':
+                    continue
+                if ccn == 'ccn8_rerun' and model != 'cornn_model2':
+                    continue
+                for ext in extensions:
+                    folder = f"{base_folder}/{ccn}/{dataset}/{model}/{ext}"
+                    search_pattern = os.path.join(folder, '**', '.hydra', 'config.yaml')
+                    for file_path in glob.iglob(search_pattern, recursive=True):
+                        # Skip
+                        if ccn == 'ccn8' and model == 'conv_recurrent2' and '20iters' not in file_path:
+                            continue
+                        if ccn == 'ccn8' and model == 'cornn_model2' and 'max_time' in file_path and dataset == 'mnist' and ext == 7:
+                            continue
+                        # Check if it's a file
+                        if os.path.isfile(file_path):
+                            configs.append(load_yaml_file(file_path))
+                            folders.append(os.path.dirname(os.path.dirname(file_path)) + "/")
+    
     # Load model and evaluate
     csv_path = SCORE_FILE
-    os.system(f"rm {csv_path}")
-    set_random_seed(600)
+    set_random_seed(500)
     for i, config in enumerate(configs):
         testset = testsets[config['dataset']]
         full_run_name = folders[i]
@@ -122,7 +107,6 @@ def main():
         data_config = DATASET_CONFIG[config['dataset']]
         model = load_model(full_run_name, config, device, data_config)
         extension = full_run_name.split("/")[-3]
-        #set_random_seed(config['seed'])
         evaluate_model_and_update_csv(model, run_name, extension, config, device,
                                       loss_func, loss_foreground, testset,
                                       epoch=None, batch_size=64, csv_file=csv_path)
@@ -154,7 +138,9 @@ def evaluate_model_and_update_csv(model, run_name, ext, config, device,
             "run_name",
             "dataset",
             "model_type",
-            "c_mid",
+            "readout_type",
+            "max_iters",
+            "num_layers",
             "extension",
             "loss",
             "iou",
@@ -173,7 +159,9 @@ def evaluate_model_and_update_csv(model, run_name, ext, config, device,
         "run_name": run_name,
         "dataset": config['dataset'],
         "model_type": config['model_type'],
-        "c_mid": config['c_mid'],
+        "readout_type": config['readout_type'],
+        "max_iters": config['max_iters'],
+        "num_layers": config['num_layers'],
         "extension": ext,
         "loss": metrics['total_loss'],
         "iou": metrics['total_iou'],

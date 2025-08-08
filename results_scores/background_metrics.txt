@@ -1,0 +1,6 @@
+new_tetronimoes
+{'total_iou': 0.7537647857666016, 'total_acc': 0.855583984375}
+mnist
+{'total_iou': 0.7685087603569031, 'total_acc': 0.8673762226104736}
+multi_mnist
+{'total_iou': 0.9092979583740234, 'total_acc': 0.95198193359375}
